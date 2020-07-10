@@ -1,36 +1,96 @@
-# A recursive program that will produce any given lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9
 import sys
 
 sys.setrecursionlimit(10**5)
 
-reference = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-ls = []
+
+class Permutation:
+
+    perm_list = []
+
+    def permute_string(self, str):
+        """Return all permutations of the given list of digits"""
+        if len(str) == 0:
+            return ['']
+        prev_list = self.permute_string(str[1:len(str)])
+        next_list = []
+        for i in range(0, len(prev_list)):
+            for j in range(0, len(str)):
+                new_str = prev_list[i][0:j] + str[0] + prev_list[i][
+                                                       j:len(str) - 1]
+                if new_str not in next_list:
+                    next_list.append(new_str)
+        return next_list
+
 
 def factorial(n):
+    """return the factorial of n"""
     r = n
-    while((n-1) > 0):
-        r = r * (n-1)
-        n = n-1
-    print(r)
+    while n - 1 > 0:
+        r = r * (n - 1)
+        n = n - 1
     return r
 
 
-
-# Calculates any lexicographic permutation for a given number of digits that are lexicographically ordered starting from 0 and populates an empty list with the result
-def calculateterm(n, termx):
-    numTerms = factorial(n)
-    termsperset = factorial(n-1)
-    setDigit = 0
-
-    for x in range(0, n):
-        if termx > termsperset:
-            termsperset = termsperset + termsperset
-            setDigit = setDigit + 1
-    ls.append(setDigit)
-    if n > 0:
-        calculateterm(n-1, termx)
+def is_num(string):
+    """Check if the given string contains numbers or not"""
+    try:
+        int(string)
+    except ValueError:
+        print("Please enter a string of digits")
+        return False
     else:
-        print(ls)
-        return ls
+        return True
 
-calculateterm(10, 1000000) # Calculates the millionth term in the sequence of lexicographic permutations of the digits 0 to 9
+
+def main():
+    """ Calculates the nth term in the sequence of lexicographic
+    permutations of a series of digits"""
+
+    string = input("Enter a string of digits: ")
+    while not is_num(string):
+        string = input("Enter a string of digits: ")
+    while True:
+        try:
+            index = int(
+                input("Enter a number to signify which permutation to print "
+                      "from the lexicographic order: "))
+        except ValueError:
+            print("Please enter a number only")
+            continue
+        else:
+            p = Permutation()
+            perms = p.permute_string(string)
+            sorted_ls = []
+            count = 0
+            for str in sorted(perms):
+                if count == int(index):
+                    break
+                sorted_ls.append(str)
+                count += 1
+            try:
+                print(sorted_ls[index - 1])
+            except IndexError:
+                print(
+                    "The series of digits you entered does not have this many "
+                    "permutations")
+                continue
+            else:
+                break
+
+
+if __name__ == "__main__":
+    main()
+
+
+""" 
+sample code:
+
+Enter a string of digits: Hello there!
+Please enter a string of digits
+Enter a string of digits: 12345
+Enter a number to signify which permutation to print from the lexicographic order: no
+Please enter a number only
+Enter a number to signify which permutation to print from the lexicographic order: 35
+23514
+
+"""
