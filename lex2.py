@@ -1,3 +1,4 @@
+# Uses itertools.permutations
 import itertools
 
 
